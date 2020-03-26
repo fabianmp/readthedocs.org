@@ -142,6 +142,14 @@ class BaseSphinx(BaseBuilder):
                     self.project.slug, self.version.slug,
                 )
 
+        if settings.USE_SUBDOMAIN:
+            version_urls = [(v.slug, "/{language}/{slug}/".format(
+                language=v.project.language,
+                slug=v.slug
+            )) for v in versions]
+        else:
+            version_urls = [(v.slug, v.get_absolute_url()) for v in versions]
+
         data = {
             'html_theme': 'sphinx_rtd_theme',
             'html_theme_import': 'sphinx_rtd_theme',
@@ -152,7 +160,7 @@ class BaseSphinx(BaseBuilder):
             'conf_py_path': conf_py_path,
             'api_host': settings.PUBLIC_API_URL,
             'commit': self.project.vcs_repo(self.version.slug).commit,
-            'versions': versions,
+            'versions': version_urls,
             'downloads': downloads,
             'subproject_urls': subproject_urls,
 
